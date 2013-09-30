@@ -5,10 +5,10 @@ describe('Schema', function () {
         , types = schema.types;
 
       // paths
-      paths.has('list1').should.be.true;
-      paths.get('list1').should.have.property('type', 'array');
-      paths.has('list2').should.be.true;
-      paths.get('list2').should.have.property('type', 'array');
+      paths.has('__root.list1').should.be.true;
+      paths.get('__root.list1').should.have.property('type', 'array');
+      paths.has('__root.list2').should.be.true;
+      paths.get('__root.list2').should.have.property('type', 'array');
 
       // types
       types.has('array').should.be.true;
@@ -34,8 +34,8 @@ describe('Schema', function () {
 
       var paths = schema.paths;
 
-      paths.get('list1').should.have.property('index', true);
-      paths.get('list2').should.have.property('index', true);
+      paths.get('__root.list1').should.have.property('index', true);
+      paths.get('__root.list2').should.have.property('index', true);
     });
 
     it('should parse embedded multipath schemas', function () {
