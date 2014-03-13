@@ -25,7 +25,8 @@
     "tea-extend": "0.2.x",
     "tea-merge": "~0.1.0",
     "pathval": "0.1.x",
-    "type-detect": "0.1.x"
+    "type-detect": "0.1.x",
+    "super": "~0.2.3"
   },
   "devDependencies": {
     "goodwin": "git://github.com/logicalparadox/goodwin"

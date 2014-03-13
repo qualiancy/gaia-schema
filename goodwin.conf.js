@@ -1,11 +1,11 @@
 module.exports = function(config) {
   config.set({
     globals: {
-      Schema: require('./index').Schema
+      Struct: require('./index').Struct
     },
 
     tests: [
-      'test/*.js'
+      'test/struct.js'
     ]
   });
 };

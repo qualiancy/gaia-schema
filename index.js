@@ -1,191 +1,47 @@
-/*!
- * schema constructor
- * Copyright(c) 2013-2014 Jake Luer <jake@qualiancy.com>
- * MIT Licensed
- */
-
-/*!
- * Module dependencies
- */
 
 var debug = require('sherlock')('struct');
-var hash = require('gaia-hash');
-var merge = require('tea-merge');
-var properties = require('pathval');
-var typeOf = require('type-detect');
+var inherits = require('super');
 
-/*!
- * Internal dependencies
- */
+var Schema = require('./lib/schema').Schema;
 
-var parse = require('./lib/parse');
 
-function hasValue(val) {
-  return 'undefined' !== typeOf(val)
-    && 'null' !== typeOf(val);
-}
+var Struct = exports.Struct = function Struct(attr, opts) {
 
-/*!
- * Constants
- */
-
-var DEFAULTS = {
-  partials: false,    // should validate with missing required fields
-  immediate: true     // should validate on set; `false` means only on {un}wrap
 };
 
-/**
- * ### Schema(spec)
- *
- * @param {Object} specification
- * @return {Schema}
- */
+Struct.extend = function(name, _schema) {
+  if (!(name && 'string' === typeof name)) {
+    schema = name;
+    name = 'Struct';
+  }
 
-var Schema = exports.Schema = function Schema(spec, opts) {
-  if (!(this instanceof Schema)) return new Schema(spec, opts);
-  this._opts = merge({}, DEFAULTS, opts || {});
-  this._spec = spec;
-  this.paths = new hash.Hash();
-  this.types = new hash.Hash();
-  parse.spec(this, this._spec);
+  var Klass = (function(self, schema) {
+    return function() {
+      this.schema = schema;
+      self.apply(this, arguments);
+    };
+  })(this, new Schema(_schema));
+
+  inherits.merge([ Klass, this ]);
+  inherits.inherits(Klass, this);
+  Klass.extend = this.extend;
+  Klass.name = name;
+  Klass.prototype.constructor = Klass;
+
+  return Klass;
 };
 
-Schema.prototype = {
 
-  constructor: Schema,
+Struct.prototype = {
 
-  /**
-   * #### .validate(data)
-   *
-   * Validate an object against the schema.
-   *
-   * @param {Object} data
-   * @return {Object} result
-   */
+  constructor: Struct,
 
-  validate: function(data) {
-    var errors = [];
-    var types = this.types;
+  get: function(key) {
 
-    this.paths.each(function(spec, path) {
-      var type = types.get(spec.type);
-      var datum = properties.get({ __root: data }, path);
-      var err;
-
-      if (!hasValue(datum) && hasValue(spec.default)) {
-        datum = spec.default;
-      }
-
-      if (!hasValue(datum) && true === spec.required) {
-        // TODO: assertion-error
-        err = { required: true, path: path };
-        errors.push(err);
-        return;
-      }
-
-      if (!hasValue(datum)) return;
-
-      if (err = type.rejected(datum, spec)) {
-        err.path = path;
-        errors.push(err);
-      }
-    });
-
-    var res = {};
-    res.valid = errors.length ? false : true;
-    res.errors = errors;
-    return res;
   },
 
-  /**
-   * #### .extract(data)
-   *
-   * Invoke the schema's extract rules on a given
-   * object. Result includes a new object that
-   * is compliant with the schema's validation
-   * rules.
-   *
-   * @param {Object} data
-   * @return {Object} result
-   */
+  set: function(key, value) {
 
-  // wrap
-  wrap: function(data) {
-    var types = this.types;
-    var extracted = {};
-    var errors = [];
-
-    this.paths.each(function(spec, path) {
-      var type = types.get(spec.type);
-      var datum = properties.get({ __root: data }, path);
-      var extract;
-
-      try {
-        extract = type.extract(datum, spec);
-      } catch(ex) {
-        errors.push(ex);
-        return;
-      }
-
-      properties.set(extracted, path, extract);
-    });
-
-    var res = {};
-    res.valid = errors.length ? false : true;
-    res.errors = errors;
-    res.extracted = extracted;
-    return res;
-  },
-
-  /**
-   * #### .cast(data)
-   *
-   * Invoke the schema's cast rules on a given
-   * object. Result includes a new object.
-   *
-   * @param {Object} data
-   * @return {Object} result
-   */
-
-  // unwrap
-  unwrap: function(data) {
-    var pre = this.validate(data);
-    var types = this.types;
-
-    if (!pre.valid) {
-      pre.casted = null;
-      return pre;
-    }
-
-    var casted = {};
-    var errors = [];
-
-    this.paths.each(function(spec, path) {
-      var type = types.get(spec.type);
-      var datum = properties.get({ __root: data }, path);
-      var cast;
-
-      if (!hasValue(datum) && hasValue(spec.default)) {
-        datum = spec.default;
-      }
-
-      if (!hasValue(datum)) return;
-
-      try {
-        cast = type.cast(datum, spec);
-      } catch(ex) {
-        errors.push(ex);
-        return;
-      }
-
-      properties.set(casted, path, cast);
-    });
-
-    var res = {};
-    res.valid = errors.length ? false : true;
-    res.errors = errors;
-    res.casted = casted.__root;
-    return res;
-  },
+  }
 
 };
