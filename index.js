@@ -1,18 +1,24 @@
 
 var debug = require('sherlock')('struct');
 var inherits = require('super');
+var pathval = require('pathval');
 
 var Schema = require('./lib/schema').Schema;
 
 
 var Struct = exports.Struct = function Struct(attr, opts) {
-
+  this.__obj = {};
 };
 
-Struct.extend = function(name, _schema) {
-  if (!(name && 'string' === typeof name)) {
-    schema = name;
-    name = 'Struct';
+Object.defineProperty(Struct, 'type', {
+  get: function() { return this.prototype.__type; },
+  enumerable: true
+});
+
+Struct.extend = function(type, _schema) {
+  if (!(type && 'string' === typeof type)) {
+    _schema = type;
+    type = 'Struct';
   }
 
   var Klass = (function(self, schema) {
@@ -24,8 +30,15 @@ Struct.extend = function(name, _schema) {
 
   inherits.merge([ Klass, this ]);
   inherits.inherits(Klass, this);
+  inherits.merge([ Klass.prototype, this.prototype ]);
+
+  Object.defineProperty(Klass, 'type', {
+    get: function() { return this.prototype.__type; },
+    enumerable: true
+  });
+
   Klass.extend = this.extend;
-  Klass.name = name;
+  Klass.prototype.__type = type;
   Klass.prototype.constructor = Klass;
 
   return Klass;
@@ -36,12 +49,14 @@ Struct.prototype = {
 
   constructor: Struct,
 
-  get: function(key) {
+  __type: 'Struct',
 
+  get: function(path) {
+    return pathval.get(this.__obj, path);
   },
 
-  set: function(key, value) {
-
+  set: function(path, value) {
+    return pathval.set(this.__obj, path, value);
   }
 
 };
