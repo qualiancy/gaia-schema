@@ -1,4 +1,10 @@
 
+0.2.1 / 2014-03-17 
+==================
+
+  * update schematype dep version
+  * bug: TypeError when type=string and re validation
+
 0.2.0 / 2014-03-17 
 ==================
 
