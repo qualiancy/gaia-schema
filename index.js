@@ -3,7 +3,7 @@ var debug = require('sherlock')('struct');
 var inherits = require('super');
 var pathval = require('pathval');
 
-var Schema = require('./lib/schema').Schema;
+var Schema = exports.Schema = require('./lib/schema').Schema;
 
 
 var Struct = exports.Struct = function Struct(attr, opts) {

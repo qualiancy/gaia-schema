@@ -20,7 +20,7 @@
     "assertion-error": "1.0.x",
     "gaia-hash": "0.1.x",
     "gaia-filter": "0.1.x",
-    "gaia-schematype": "0.4.x",
+    "gaia-schematype": "~0.5.2",
     "sherlock": "*",
     "tea-extend": "0.2.x",
     "tea-merge": "~0.1.0",

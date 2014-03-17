@@ -1,11 +1,14 @@
 module.exports = function(config) {
   config.set({
     globals: {
-      Struct: require('./index').Struct
+      AssertionError: require('assertion-error'),
+      Struct: require('./index').Struct,
+      Schema: require('./index').Schema
     },
 
     tests: [
-      'test/struct.js'
+      'test/schema.js',
+      'test/types.js'
     ]
   });
 };
