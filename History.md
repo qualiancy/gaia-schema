@@ -1,4 +1,13 @@
 
+0.2.0 / 2014-03-17 
+==================
+
+  * Merge branch 'refactor/struct'
+  * schema: primary tranform methods are #wrap/#unwrap
+  * passing tests
+  * dir: folder organization
+  * test: use hydro / goodwin
+
 0.1.1 / 2013-09-30 
 ==================
 

@@ -10,12 +10,6 @@
 
     $ npm install gaia-schema
 
-### Component
-
-`gaia-schema` is available as a [component](https://github.com/component/component).
-
-    $ component install qualiancy/gaia-schema
-
 ## License
 
 (The MIT License)
