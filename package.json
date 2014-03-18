@@ -21,7 +21,7 @@
     "gaia-hash": "0.1.x",
     "gaia-filter": "0.1.x",
     "gaia-schematype": "~0.5.3",
-    "sherlock": "*",
+    "sherlock": "~1.1.0",
     "tea-extend": "0.2.x",
     "tea-merge": "~0.1.0",
     "pathval": "0.1.x",
