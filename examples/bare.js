@@ -3,17 +3,17 @@
  */
 
 var HashMap = require('gaia-hash').Hash;
-var Struct = require('../').Struct;
+var struct = require('struct')('struct:examples:bare');
 
 /*!
  * Embedded `PhoneNumber` struct
  */
 
-var PhoneNumber = Struct.extend('PhoneNumber', {
+var PhoneNumber = struct('phone_number', {
   number: { type: Number, required: true },
   type: {
     type: Number,
-    enum: [ 'MOBILE', 'HOME', 'WORK' ],
+    enum: { 0: 'MOBILE', 1: 'HOME', 2: 'WORK' },
     default: 'HOME'
   }
 });
@@ -22,11 +22,11 @@ var PhoneNumber = Struct.extend('PhoneNumber', {
  * Top-level `Person` struct
  */
 
-var Person = Struct.extend('Person', {
-  name: { type: String, required: true },
+var Person = struct('person', {
   id: { type: Number, required: true, primaryIndex: true },
-  email: { type: String, match: EMAIL_RE, index: true },
-  phone: [ PhoneNumber ]
+  name: { type: String, required: true },
+  email: { type: 'email', index: true },
+  phone: [ PhoneNumber /* or 'phone_number' */ ]
 });
 
 /*!
@@ -36,23 +36,33 @@ var Person = Struct.extend('Person', {
 (function main() {
   var people = new HashMap(null, {
     key: 'id',
-    type: Person
+    type: Person // or struct.type('person')
   });
 
-  var jdoe = new Person();
-  jdoe.set('name', 'John Doe');
-  jdoe.set('id', 1234);
-  jdoe.set('email', 'jdoe@example.com');
+  // alt: new Person({
+  var jdoe = struct.create('person', {
+    id: 1234,
+    name: 'John Doe',
+    email: 'jdoes@example.com'
+  });
 
-  people.insert(jdoe);
+  // `push` = add no matter what
+  // `union` = only push if does not exist
+  // ...
+  jdoe.set('phone').union({
+    number: '55555555555',
+    type: 'MOBILE'
+  });
 
-  function() {
+  // since we specified key on create, can just set object
+  people.set(jdoe);
+
+  (function() {
     var jdoe = people.get(1234); // can also specify index if schema has path as unique
     var jdoes = people.getAll('jdoe@example.com', { index: 'email' }); // returns HashMap
 
     assert(jdoe instanceof Person);
     assert(jdoes.length === 1);
     assert.deepEqual(jdoe, jdoes.at(0));
-  }();
-
+  })();
 })();
