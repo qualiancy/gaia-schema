@@ -1,10 +1,15 @@
-suite('array', function() {
-  test('registered', function() {
-    var Arr = Schema.type('array');
-    should.exist(Arr);
-    var arr = new Arr();
-    arr.should.have.property('name', 'array');
+
+function isRegistered(key) {
+  test('Schema.type(\'' + key + '\')', function() {
+    var Klass = Schema.type(key);
+    should.exist(Klass);
+    var klass = new Klass();
+    klass.should.have.property('name', key);
   });
+}
+
+suite('array', function() {
+  isRegistered('array');
 
   test('.valid()', function() {
     var Arr = Schema.type('array');
@@ -37,12 +42,7 @@ suite('array', function() {
 });
 
 suite('boolean', function() {
-  test('registered', function() {
-    var Bln = Schema.type('boolean');
-    should.exist(Bln);
-    var bln = new Bln();
-    bln.should.have.property('name', 'boolean');
-  });
+  isRegistered('boolean');
 
   test('.valid()', function() {
     var Bln = Schema.type('boolean');
@@ -76,12 +76,7 @@ suite('boolean', function() {
 });
 
 suite('number', function() {
-  test('registered', function() {
-    var Num = Schema.type('number');
-    should.exist(Num);
-    var num = new Num();
-    num.should.have.property('name', 'number');
-  });
+  isRegistered('number');
 
   test('.valid()', function() {
     var Num = Schema.type('number');
@@ -117,12 +112,7 @@ suite('number', function() {
 });
 
 suite('string', function() {
-  test('registered', function() {
-    var Str = Schema.type('string');
-    should.exist(Str);
-    var str = new Str();
-    str.should.have.property('name', 'string');
-  });
+  isRegistered('string');
 
   test('.valid()', function() {
     var Str = Schema.type('string');
@@ -131,6 +121,7 @@ suite('string', function() {
     str.valid(42).should.be.false;
     str.valid('x', { enum: [ 'x', 'y' ] }).should.be.true;
     str.valid('z', { enum: [ 'x', 'y' ] }).should.be.false;
+    str.valid('abc', { re: /^[a-z0-9_]{3,16}$/ }).should.be.true;
   });
 
   test('.wrap()', function() {
@@ -154,4 +145,8 @@ suite('string', function() {
     }});
     obj.should.equal('HELLO UNIVERSE');
   });
+});
+
+suite('embedded', function() {
+  isRegistered('embedded');
 });

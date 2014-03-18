@@ -7,8 +7,7 @@ module.exports = function(config) {
     },
 
     tests: [
-      'test/schema.js',
-      'test/types.js'
+      'test/*.js',
     ]
   });
 };
